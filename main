@@ -1,0 +1,49 @@
+import discord
+from discord.ext import commands
+import asyncio
+
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'We have logged in as {bot.user}')
+
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f'Hi! I am a bot {bot.user}!')
+
+@bot.command()
+async def heh(ctx, count_heh = 5):
+    await ctx.send("he" * count_heh)
+
+
+@bot.command()
+async def image(ctx):
+    if ctx.message.attachments:
+        for attachment in ctx.message.attachments:
+            file_name = attachment.filename
+            file_url = attachment.url
+            await attachment.save(f"images/{file_name}")
+            await ctx.send(get_class(model_path="./keras_model.h5", labels_path="./labels.txt", image_path= f"images/{file_name}"))
+
+    else:
+        print("no envio ningun archivo")
+
+#Instead of calling bot.run() directly, create a function that calls it
+def start_bot():
+    asyncio.get_event_loop().run_until_complete(bot.start(""))
+#And run it in a loop using nest_asyncio to avoid conflict with jupyter's asyncio loop
+import nest_asyncio
+nest_asyncio.apply()
+start_bot()
+
+
+
+
+
+
+
